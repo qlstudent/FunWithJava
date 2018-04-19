@@ -20,7 +20,7 @@ before_script:
   - echo $MAVEN_OPTS
 
 jdk:
-  - oraclejdk10
+  - oraclejdk8
 
 os:
   - linux
@@ -44,5 +44,4 @@ notifications:
 addons:
   apt:
     packages:
-      - oracle-java10-installer
       - haveged
