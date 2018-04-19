@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_java-hello-world" default="compile.module.java-hello-world">
+    <dirname property="module.java-hello-world.basedir" file="${ant.file.module_java-hello-world}"/>
+
+    <property name="module.jdk.home.java-hello-world" value="${project.jdk.home}"/>
+    <property name="module.jdk.bin.java-hello-world" value="${project.jdk.bin}"/>
+    <property name="module.jdk.classpath.java-hello-world" value="${project.jdk.classpath}"/>
+
+    <property name="compiler.args.java-hello-world" value="-encoding UTF-8 -source 10 -target 10 ${compiler.args}"/>
+
+    <property name="java-hello-world.output.dir"
+              value="${module.java-hello-world.basedir}/out/production/java-hello-world"/>
+    <property name="java-hello-world.testoutput.dir"
+              value="${module.java-hello-world.basedir}/out/test/java-hello-world"/>
+
+    <path id="java-hello-world.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="java-hello-world.module.production.classpath">
+        <path refid="${module.jdk.classpath.java-hello-world}"/>
+    </path>
+
+    <path id="java-hello-world.runtime.production.module.classpath">
+        <pathelement location="${java-hello-world.output.dir}"/>
+    </path>
+
+    <path id="java-hello-world.module.classpath">
+        <path refid="${module.jdk.classpath.java-hello-world}"/>
+        <pathelement location="${java-hello-world.output.dir}"/>
+    </path>
+
+    <path id="java-hello-world.runtime.module.classpath">
+        <pathelement location="${java-hello-world.testoutput.dir}"/>
+        <pathelement location="${java-hello-world.output.dir}"/>
+    </path>
+
+
+    <patternset id="excluded.from.module.java-hello-world">
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.java-hello-world">
+        <patternset refid="excluded.from.module.java-hello-world"/>
+    </patternset>
+
+    <path id="java-hello-world.module.sourcepath">
+        <dirset dir="${module.java-hello-world.basedir}">
+            <include name="src"/>
+        </dirset>
+    </path>
+
+
+    <target name="compile.module.java-hello-world"
+            depends="compile.module.java-hello-world.production,compile.module.java-hello-world.tests"
+            description="Compile module java-hello-world"/>
+
+    <target name="compile.module.java-hello-world.production" depends="register.custom.compilers"
+            description="Compile module java-hello-world; production classes">
+        <mkdir dir="${java-hello-world.output.dir}"/>
+        <javac2 destdir="${java-hello-world.output.dir}" debug="${compiler.debug}"
+                nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true"
+                executable="${module.jdk.bin.java-hello-world}/javac">
+            <compilerarg line="${compiler.args.java-hello-world}"/>
+            <bootclasspath refid="java-hello-world.module.bootclasspath"/>
+            <classpath refid="java-hello-world.module.production.classpath"/>
+            <src refid="java-hello-world.module.sourcepath"/>
+            <patternset refid="excluded.from.compilation.java-hello-world"/>
+        </javac2>
+
+        <copy todir="${java-hello-world.output.dir}">
+            <fileset dir="${module.java-hello-world.basedir}/src">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile.module.java-hello-world.tests"
+            depends="register.custom.compilers,compile.module.java-hello-world.production"
+            description="compile module java-hello-world; test classes" unless="skip.tests"/>
+
+    <target name="clean.module.java-hello-world" description="cleanup module">
+        <delete dir="${java-hello-world.output.dir}"/>
+        <delete dir="${java-hello-world.testoutput.dir}"/>
+    </target>
+</project>
