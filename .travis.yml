@@ -1,0 +1,48 @@
+language: java
+
+sudo: false
+
+dist: trusty
+
+before_install:
+  - unset _JAVA_OPTIONS
+  - rm ~/.m2/settings.xml
+  - export MAVEN_SKIP_RC=true
+  - export MAVEN_OPTS="-Xmn64M -Xmx512M -XX:CompressedClassSpaceSize=96M"
+  - export JAVA_OPTS="$JAVA_OPTS -XX:CompressedClassSpaceSize=96M"
+
+before_script:
+  - unset GEM_PATH GEM_HOME IRBRC JRUBY_OPTS
+  - unset _JAVA_OPTIONS # travis/travis#8408
+  - export PATH="`pwd`/bin:$PATH"
+  - echo $HOME
+  - echo $JAVA_OPTS
+  - echo $MAVEN_OPTS
+
+jdk:
+  - oraclejdk10
+
+os:
+  - linux
+
+
+notifications:
+  irc:
+    channels:
+      - "irc.freenode.org#openroom"
+    on_success: change
+    on_failure: always
+    template:
+      - "%{repository} (%{branch}:%{commit} by %{author}): %{message} (%{build_url})"
+    skip_join: true
+
+# we are on a branch
+    on_success: always
+    on_failure: always
+
+
+addons:
+  apt:
+    packages:
+      - oracle-java10-installer
+      - haveged
